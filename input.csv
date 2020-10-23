@@ -1,0 +1,13 @@
+minThreadCon,MinThreadsConstraint-0,-1,dum05:Server|
+minThreadCon,MinThreadsConstraint-1,-1,AdminServer:Server|
+minThreadCon,MinThreadsConstraint-2,-1,Cluster-0:Cluster|
+minThreadCon,MinThreadsConstraint-3,5,dem01:Server|dum05:Server|
+maxThreadCon,MaxThreadsConstraint-0,-1,dum05:Server|
+maxThreadCon,MaxThreadsConstraint-1,10,dom03:Server|dum05:Server|Cluster-0:Cluster|
+capacityConstraint,CapacityConstraint-0,-1,dum05:Server|
+resTimeReqClass,ResponseTimeReqClass-0,2,dum06:Server|
+resTimeReqClass,ResponseTimeReqClass-1,0,dem01:Server|dum06:Server|
+fairShareReqClass,FairShareReqClass-0,60,dum06:Server|
+fairShareReqClass,FairShareReqClass-1,50,dom03:Server|
+conReqClass,ContextReqClass-0,dom03:Server|
+workManager,WorkManager-0,MaxThreadsConstraint-0,MinThreadsConstraint-0,None,None,dum05:Server|dum06:Server|
