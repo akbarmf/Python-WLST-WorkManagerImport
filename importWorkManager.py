@@ -1,5 +1,6 @@
 from java.io import FileInputStream
 
+# Function to set target instances or cluster
 def target(serverTarget):
     targetsForDeployment = []
     targets = serverTarget.split('|')
@@ -15,6 +16,7 @@ def target(serverTarget):
     #return targetsForDeployment
 
 
+# Function create Maximum Threads Constraint 
 def createMaxWM(line):
   try:
     startEdit()
@@ -22,6 +24,7 @@ def createMaxWM(line):
     domainName = cmo.getName()
     items = line.split(',')
     items = [item.strip() for item in items]
+    # Define data from csv 
     (type,maxName,count,serverTarget) = items
      
     # Check if Maximum Threads Constraint name exist 
@@ -48,7 +51,7 @@ def createMaxWM(line):
     print e
 	
 
-
+# Function create Minimum Threads Constraint
 def createMinWM(line):
   try:
     startEdit()
@@ -56,6 +59,7 @@ def createMinWM(line):
     domainName = cmo.getName()
     items = line.split(',')
     items = [item.strip() for item in items]
+    # Define data from csv
     (type,minName,count,serverTarget) = items
     
     # Check if Minimum Threads Constraint exist	
@@ -82,7 +86,7 @@ def createMinWM(line):
     print e
 
 
-
+# Function Create Capacity 
 def createCapacity(line):
   try:
     startEdit()
@@ -90,6 +94,7 @@ def createCapacity(line):
     domainName = cmo.getName()
     items = line.split(',')
     items = [item.strip() for item in items]
+    # Define data from csv
     (type,capName,count,serverTarget) = items
     
     # Check if Capacity Constraint exist 
@@ -115,6 +120,7 @@ def createCapacity(line):
     print e
 
 
+# Function create Response Time Request Class
 def createResTimeReqClass(line):
   try:
     startEdit()
@@ -122,9 +128,10 @@ def createResTimeReqClass(line):
     domainName = cmo.getName()
     items = line.split(',')
     items = [item.strip() for item in items]
+    # Define data from csv
     (type,resName,goal,serverTarget) = items
     
-    # Check if Capacity Constraint exist 
+    # Check if Response Time Request Class exist 
     cd('/SelfTuning/' + domainName)
     redirect('/dev/null','false')
     exist = ls('ResponseTimeRequestClasses/',returnMap='true')
@@ -133,7 +140,7 @@ def createResTimeReqClass(line):
       exit(exitcode=1,defaultAnswer='y')
     print('\nCreate Response Time Request Class : ' + resName )
 
-    # Create Capacity Constraint
+    # Create Response Time Request Class
     cmo.createResponseTimeRequestClass(resName)
   
     # Target to Server/Cluster
@@ -147,7 +154,7 @@ def createResTimeReqClass(line):
     print e
 
 
-
+# Function create Fair Share Request Class
 def createFairShareReqClass(line):
   try:
     startEdit()
@@ -155,9 +162,10 @@ def createFairShareReqClass(line):
     domainName = cmo.getName()
     items = line.split(',')
     items = [item.strip() for item in items]
+    # Define data from csv
     (type,fairName,fairShare,serverTarget) = items
     
-    # Check if Capacity Constraint exist 
+    # Check if Fair Share Request Class exist 
     cd('/SelfTuning/' + domainName)
     redirect('/dev/null','false')
     exist = ls('FairShareRequestClasses/',returnMap='true')
@@ -166,21 +174,21 @@ def createFairShareReqClass(line):
       exit(exitcode=1,defaultAnswer='y')
     print('\nCreate Fair Share: ' + fairName )
 
-    # Create Capacity Constraint
+    # Create Fair Share Request Class
     cmo.createFairShareRequestClass(fairName)
   
     # Target to Server/Cluster
     cd('/SelfTuning/' + domainName + '/FairShareRequestClasses/' + str(fairName))
     target(serverTarget)
   
-    # Set up goal Size
+    # Set up Fair Share
     cmo.setFairShare(int(fairShare))
 
   except Exception, e:
     print e
 
 
-
+# Create Context Request Class
 def createConReqClass(line):
   try:
     startEdit()
@@ -189,9 +197,10 @@ def createConReqClass(line):
     items = line.split(',')
     items = [item.strip() for item in items]
     #(type,conReqName,partFairShare,serverTarget,context_user,context_group,context) = items
+    # Define data from csv
     (type,conReqName,serverTarget) = items
     
-    # Check if Capacity Constraint exist 
+    # Check if Context Request Class exist 
     cd('/SelfTuning/' + domainName)
     redirect('/dev/null','false')
     exist = ls('ContextRequestClasses/',returnMap='true')
@@ -200,7 +209,7 @@ def createConReqClass(line):
       exit(exitcode=1,defaultAnswer='y')
     print('\nContext Request Classes : ' + conReqName )
 
-    # Create Capacity Constraint
+    # Create Context Request Class
     cmo.createContextRequestClass(conReqName)
   
     # Target to Server/Cluster
@@ -218,7 +227,7 @@ def createConReqClass(line):
     print e
 
 
-
+# Create Work Manager
 def createWorkManager(line):
   try:
     startEdit()
@@ -226,6 +235,7 @@ def createWorkManager(line):
     domainName = cmo.getName()
     items = line.split(',')
     items = [item.strip() for item in items]
+    # Define data from csv
     (type,wmName,maxWm,minWm,reqClass,Capacity,serverTarget) = items
      
     # Check if Work Manager already exist  
@@ -240,11 +250,13 @@ def createWorkManager(line):
     print('\nCreate Work Manager: ' + wmName )
     cmo.createWorkManager(wmName)
 
-    # Assign maxWorkManager
+    # Assign Maximum Work Manager
+    # Check if value "None"
     if maxWm == "None":
       cd('/SelfTuning/' + domainName + '/WorkManagers/' + str(wmName))
       cmo.setMaxThreadsConstraint(None)
     else:
+      # Check if value exist in Max Threads Constraints
       exist = ls('/SelfTuning/' + domainName + '/MaxThreadsConstraints/',returnMap='true')
       if maxWm in exist:
         cd('/SelfTuning/' + domainName + '/WorkManagers/' + str(wmName))
@@ -253,11 +265,13 @@ def createWorkManager(line):
       else:
         print('- Max Threads Constraint ' + maxWm + ' Not found')
 
-    # Assign minWorkManager
+    # Assign Minimum Work Manager
+    # Check if value "None"
     if minWm == "None":
       cd('/SelfTuning/' + domainName + '/WorkManagers/' + str(wmName))
       cmo.setMinThreadsConstraint(None)
     else:
+      # Check if value exist in Minimum Threads Constraint
       exist1 = ls('/SelfTuning/' + domainName + '/MinThreadsConstraints/',returnMap='true')
       if minWm in exist1:
         cd('/SelfTuning/' + domainName + '/WorkManagers/' + str(wmName))
